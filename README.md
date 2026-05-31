@@ -5,18 +5,38 @@
 ### Example Usage
 
 ```rust
-let mut heap = vec![0u8; 1024];
+use buddy_allocator::BuddyAllocator;
 
-let mut alloc = BuddyAllocator::new(
-    heap.as_mut_ptr(),
-    heap.len(),
-);
+fn main() {
+    let mut heap = vec![0u8; 1024];
 
-let p1 = alloc.alloc(100).unwrap();
-let p2 = alloc.alloc(200).unwrap();
+    let mut alloc =
+        BuddyAllocator::new(&mut heap, 16);
 
-alloc.dealloc(p1, 100);
-alloc.dealloc(p2, 200);
+    alloc.dump();
+
+    let a = alloc.alloc(100).unwrap();
+    let b = alloc.alloc(200).unwrap();
+    let c = alloc.alloc(50).unwrap();
+
+    println!("\nAfter allocs");
+    alloc.dump();
+
+    alloc.dealloc(a);
+
+    println!("\nAfter free A");
+    alloc.dump();
+
+    alloc.dealloc(b);
+
+    println!("\nAfter free B");
+    alloc.dump();
+
+    alloc.dealloc(c);
+
+    println!("\nAfter free C");
+    alloc.dump();
+}
 ```
 
 
